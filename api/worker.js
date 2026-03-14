@@ -19,8 +19,8 @@ const CORS_HEADERS = {
 // 학사공지: bbs ID = 143, 일반공지: bbs ID = 24, 장학: bbs ID = 273
 const BOARD_CONFIG = {
   '학사': {
-    listUrl: 'https://www.hs.ac.kr/bbs/kor/143/artclList.do',
-    bbsId: '143',
+    listUrl: 'https://www.hs.ac.kr/bbs/kor/274/artclList.do',
+    bbsId: '274',
     site: 'kor',
   },
   '일반': {
@@ -29,7 +29,7 @@ const BOARD_CONFIG = {
     site: 'kor',
   },
   '장학': {
-    listUrl: 'https://www.hs.ac.kr/bbs/kor/273/artclList.do',
+    listUrl: 'https://www.hs.ac.kr/bbsId: '275'/artclList.do',
     bbsId: '273',
     site: 'kor',
   },

@@ -3,7 +3,7 @@
    Campus Smart Hub
    
    동작 방식:
-   1. Cloudflare Worker API에서 실제 한신대 공지를 fetch
+   1. Cloudflare Worker API에서 실제 한신대 공지를 fetchㄹ
    2. 성공 → 실시간 공지 데이터 사용
    3. 실패 → 로컬 샘플 데이터로 폴백
    4. 캐시: sessionStorage에 10분간 캐시
@@ -11,7 +11,7 @@
 
 /* ─── API 설정 ─── */
 // ⚠️ 배포 후 아래 URL을 실제 Cloudflare Worker URL로 변경하세요!
-// 예: https://campus-smart-hub-api.YOUR_NAME.workers.dev
+// 예: https://campus-smart-hub-api.lsch4435.workers.dev
 const API_BASE_URL = 'https://github.com/cloudflare/workers-sdk/issues/new/choose';
 
 const CACHE_KEY = 'csh_notices_cache';

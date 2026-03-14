@@ -183,7 +183,7 @@ function createNoticeCardHTML(notice, options) {
   const showDetail = options.showDetail !== false;
 
   // ID를 안전하게 인용 (문자열 ID 대비)
-  const safeId = JSON.stringify(notice.id);
+  const safeId = "'" + String(notice.id).replace(/'/g, "\\'") + "'";
 
   return '<div class="card notice-card fade-in" data-id="' + notice.id + '" ' +
     (showDetail ? 'onclick="openNoticeModal(' + safeId + ')"' : '') + '>' +
@@ -226,21 +226,25 @@ function handleCalendarClick(noticeId, btn) {
 }
 
 /* --- 공지 상세 모달 --- */
-function openNoticeModal(noticeId) {
+function openNoticeModal(noticeId) 
   const notice = notices.find(n => String(n.id) === String(noticeId));
   if (!notice) return;
 
   const existing = document.querySelector('.modal-overlay');
   if (existing) existing.remove();
 
-  const bookmarked = isBookmarked(notice.id);
-  const inCalendar = isNoticeInCalendar(notice.id);
-  const contentHTML = (notice.content || notice.title).replace(/\n/g, '<br>');
-  const safeId = JSON.stringify(notice.id);
+const bookmarked = isBookmarked(notice.id);
+const inCalendar = isNoticeInCalendar(notice.id);
+const safeId = "'" + String(notice.id).replace(/'/g, "\\'") + "'";
+const hasUrl = notice.url && notice.url !== '#' && notice.source !== 'sample';
+const hasRealContent = notice.content && notice.content !== notice.title;
 
-  // 한신대 원문 링크가 있는 경우 (API 데이터)
-  const hasUrl = notice.url && notice.url !== '#' && notice.source !== 'sample';
-
+const contentHTML = hasRealContent
+  ? notice.content.replace(/\n/g, '<br>')
+  : '<p>이 공지는 현재 목록 정보만 불러와서 본문 전체는 바로 표시되지 않습니다.</p>' +
+    (hasUrl
+      ? '<p style="margin-top:12px;"><a href="' + notice.url + '" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);font-weight:600;text-decoration:underline;">한신대학교 원문 공지 보기 →</a></p>'
+      : '');
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
   overlay.innerHTML =

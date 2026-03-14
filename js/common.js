@@ -226,7 +226,7 @@ function handleCalendarClick(noticeId, btn) {
 }
 
 /* --- 공지 상세 모달 --- */
-function openNoticeModal(noticeId) 
+function openNoticeModal(noticeId) {
   const notice = notices.find(n => String(n.id) === String(noticeId));
   if (!notice) return;
 

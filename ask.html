@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>질문하기 - Campus Smart Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- 네비게이션 -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">C</span>
+        Campus Smart Hub
+      </a>
+      <button class="nav-toggle" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">홈</a>
+        <a href="notices.html" class="nav-link">공지사항</a>
+        <a href="ask.html" class="nav-link active">질문하기</a>
+        <a href="calendar.html" class="nav-link">캘린더</a>
+        <a href="bookmarks.html" class="nav-link">북마크</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 메인 콘텐츠 -->
+  <main class="container">
+
+    <div class="page-header" style="text-align:center;">
+      <h1>무엇이 궁금하세요?</h1>
+      <p>질문을 입력하면 관련 공지를 찾아드립니다.</p>
+    </div>
+
+    <div class="ask-container">
+
+      <!-- 검색 입력 -->
+      <div class="ask-input-wrap">
+        <input type="text" class="ask-input" id="askInput" placeholder="예: 장학금 신청 언제야?">
+        <button class="ask-submit" id="askSubmit" title="검색">→</button>
+      </div>
+
+      <!-- 추천 질문 -->
+      <div class="ask-suggestions" id="askSuggestions"></div>
+
+      <!-- 검색 결과 -->
+      <p class="ask-results-title" id="askResultsTitle"></p>
+      <div class="notice-grid" id="askResults" style="grid-template-columns: 1fr;"></div>
+
+    </div>
+
+  </main>
+
+  <!-- 푸터 -->
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 Campus Smart Hub. 대학생 생활 도우미 웹사이트.</p>
+    </div>
+  </footer>
+
+  <!-- 스크립트 -->
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/search.js"></script>
+
+</body>
+</html>

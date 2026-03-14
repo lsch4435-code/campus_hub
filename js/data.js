@@ -12,7 +12,7 @@
 /* ─── API 설정 ─── */
 // ⚠️ 배포 후 아래 URL을 실제 Cloudflare Worker URL로 변경하세요!
 // 예: https://campus-smart-hub-api.lsch4435.workers.dev
-const API_BASE_URL = 'https://github.com/cloudflare/workers-sdk/issues/new/choose';
+const API_BASE_URL = 'https://campus-smart-hub-api.lsch4435.workers.dev';
 
 const CACHE_KEY = 'csh_notices_cache';
 const CACHE_DURATION = 10 * 60 * 1000; // 10분 (밀리초)

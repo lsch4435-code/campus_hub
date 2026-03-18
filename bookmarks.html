@@ -8,11 +8,10 @@
 </head>
 <body>
 
-  <!-- 네비게이션 -->
   <nav class="nav">
     <div class="nav-inner">
       <a href="index.html" class="nav-logo">
-        <span class="logo-icon">C</span>
+        <span class="logo-icon">H</span>
         Campus Smart Hub
       </a>
       <button class="nav-toggle" aria-label="메뉴 열기">
@@ -21,14 +20,18 @@
       <div class="nav-links">
         <a href="index.html" class="nav-link">홈</a>
         <a href="notices.html" class="nav-link">공지사항</a>
-        <a href="ask.html" class="nav-link">질문하기</a>
         <a href="calendar.html" class="nav-link">캘린더</a>
+        <a href="timetable.html" class="nav-link">시간표</a>
+        <a href="shuttle.html" class="nav-link">셔틀버스</a>
+        <a href="ask.html" class="nav-link">질문하기</a>
         <a href="bookmarks.html" class="nav-link active">북마크</a>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" title="다크 모드">🌙</button>
       </div>
     </div>
   </nav>
 
-  <!-- 메인 콘텐츠 -->
   <main class="container">
 
     <div class="page-header">
@@ -39,19 +42,16 @@
       </p>
     </div>
 
-    <!-- 북마크 그리드 -->
     <div class="bookmark-grid" id="bookmarkGrid"></div>
 
   </main>
 
-  <!-- 푸터 -->
   <footer class="footer">
     <div class="container">
-      <p>© 2026 Campus Smart Hub. 대학생 생활 도우미 웹사이트.</p>
+      <p>© 2026 Campus Smart Hub v2. 한신대학교 캠퍼스 생활 도우미.</p>
     </div>
   </footer>
 
-  <!-- 스크립트 -->
   <script src="js/data.js"></script>
   <script src="js/common.js"></script>
   <script src="js/bookmark.js"></script>

@@ -1,129 +1,101 @@
-# 🎓 Campus Smart Hub - 대학생 생활 도우미
+[README.md](https://github.com/user-attachments/files/26074453/README.md)
+# Campus Smart Hub v2 🎓
 
-대학생들이 학교 공지를 확인하고, 질문을 통해 필요한 정보를 찾고, 중요한 일정을 캘린더에 추가하여 관리할 수 있는 웹 애플리케이션입니다.
+한신대학교 캠퍼스 생활 도우미 웹사이트 (업그레이드 버전)
 
-## 📸 스크린샷
+## v2 변경사항
 
-| 홈 | 공지사항 | 질문하기 | 캘린더 |
-|---|---|---|---|
-| 마감 임박 공지, 오늘 일정 미리보기 | 카테고리 필터, 검색, D-day 표시 | 키워드 기반 공지 검색 | 월간 캘린더, 일정 추가/삭제 |
+### 🎨 한신대 보라색 테마 + 다크모드
+- 한신대학교 아이덴티티 컬러(보라색) 기반 테마
+- 다크모드 지원 (시스템 설정 자동 감지 + 수동 전환)
+- 모든 페이지에서 통일된 보라색 테마 적용
 
-## ✨ 주요 기능
+### 📄 공지 본문+이미지 상세 보기
+- Worker API에 `/api/notice-detail` 엔드포인트 추가
+- 공지 클릭 시 모달에서 본문 전체 텍스트 + 첨부 이미지 표시
+- 로딩 스피너 → 콘텐츠 표시 UX
 
-### 1. 학교 공지 목록
-- 카드 기반 UI로 공지 표시
-- 카테고리 필터 (학사 / 장학 / 기숙사 / 취업)
-- 키워드 검색
-- 중요 공지 상단 고정 (📌)
-- 공지 클릭 시 상세 모달
+### 🚫 가짜 마감일 제거
+- API 데이터에 실제 마감일 정보가 없으므로 가짜 deadline 제거
+- deadline이 있는 공지만 D-day 표시
+- 홈 화면: "마감 임박" → "최신 공지"로 변경
 
-### 2. 질문 기반 공지 검색
-- 자연어 질문 입력 → 관련 공지 추천
-- 키워드 추출 및 매칭 알고리즘
-- 추천 질문 버튼 제공
+### 📅 시간표 등록 기능 (신규)
+- `/timetable.html` 페이지 신규
+- 과목명, 교수명, 강의실, 요일, 시간 입력
+- 시각적 시간표 그리드 (색상 자동 배정)
+- 수업 클릭으로 삭제 (localStorage 저장)
 
-### 3. 캘린더 일정 관리
-- 월간 캘린더 UI
-- 날짜 클릭 → 일정 추가/삭제
-- LocalStorage 저장
+### 🎓 학사일정 캘린더 자동등록
+- 캘린더 페이지에 2026학년도 1학기 학사일정 섹션
+- 개별 등록 또는 "전체 일괄 등록" 버튼
+- 중간고사, 기말고사, 수강정정 등 주요 일정 포함
 
-### 4. 공지 → 캘린더 연동
-- 공지 카드의 📅 버튼 클릭 → 캘린더 자동 등록
-- 모달에서도 캘린더 추가 가능
+### 🚌 셔틀버스 시간표 (신규)
+- `/shuttle.html` 페이지 신규
+- 수원역, 오산역/병점역 노선 시간표
+- "다음 버스" 자동 하이라이트 (잔여 시간 표시)
+- 1분마다 자동 갱신
 
-### 5. D-day 표시
-- 마감일 기준 D-day 자동 계산
-- 긴급(D-3 이내), 임박(D-7 이내) 표시
+### 🔔 브라우저 새 공지 알림
+- Web Notification API 활용
+- "알림 받기" 버튼으로 권한 요청
+- 새 공지 감지 시 브라우저 푸시 알림
+- 페이지 내 알림 배너도 표시
+- 카카오톡 등 모바일 알림보다 브라우저 알림이 웹앱에 적합
 
-### 6. 북마크
-- ☆ 버튼으로 공지 저장
-- 북마크 페이지에서 목록 확인
-- LocalStorage 저장
+## 기술 스택
 
-## 🛠 기술 스택
+- **프론트엔드**: 순수 HTML/CSS/JS (프레임워크 없음)
+- **백엔드**: Cloudflare Workers
+- **데이터**: 한신대학교 홈페이지 실시간 스크래핑
+- **저장소**: localStorage (시간표, 북마크, 일정, 알림설정)
+- **배포**: GitHub Pages (프론트) + Cloudflare Workers (API)
 
-- **HTML5** - 시맨틱 마크업
-- **CSS3** - 반응형 디자인, CSS 변수, 트랜지션/애니메이션
-- **Vanilla JavaScript** - 프레임워크 없이 순수 JS로 구현
-- **LocalStorage** - 클라이언트 사이드 데이터 저장
-
-## 📁 프로젝트 구조
+## 파일 구조
 
 ```
-campus-smart-hub/
-│
-├── index.html          # 홈 페이지
-├── notices.html        # 공지사항 페이지
-├── ask.html            # 질문하기 페이지
-├── calendar.html       # 캘린더 페이지
-├── bookmarks.html      # 북마크 페이지
-│
+├── index.html          # 홈
+├── notices.html        # 공지사항
+├── calendar.html       # 캘린더 + 학사일정
+├── timetable.html      # 시간표 (v2 신규)
+├── shuttle.html        # 셔틀버스 (v2 신규)
+├── ask.html            # 질문하기
+├── bookmarks.html      # 북마크
 ├── css/
-│   └── style.css       # 전체 스타일시트
-│
+│   └── style.css       # 보라색 테마 + 다크모드
 ├── js/
-│   ├── data.js         # 공지 데이터 및 추천 질문
-│   ├── common.js       # 공통 유틸리티 (네비게이션, 토스트, 북마크, 캘린더 API)
-│   ├── notices.js      # 공지 목록 페이지 로직
-│   ├── search.js       # 질문 검색 페이지 로직
-│   ├── calendar.js     # 캘린더 페이지 로직
-│   ├── bookmark.js     # 북마크 페이지 로직
-│   └── home.js         # 홈 페이지 로직
-│
-└── README.md           # 프로젝트 설명
+│   ├── data.js         # API 연동 + 학사일정/셔틀 데이터
+│   ├── common.js       # 공통 유틸 + 다크모드 + 알림
+│   ├── home.js         # 홈페이지
+│   ├── notices.js      # 공지 목록
+│   ├── calendar.js     # 캘린더 + 학사일정 등록
+│   ├── timetable.js    # 시간표 관리 (v2 신규)
+│   ├── shuttle.js      # 셔틀버스 (v2 신규)
+│   ├── search.js       # 질문 검색
+│   └── bookmark.js     # 북마크
+├── api/
+│   └── worker.js       # Cloudflare Worker (v2: notice-detail 추가)
+└── wrangler.toml
 ```
 
-### 파일별 역할
+## Worker 배포
 
-| 파일 | 역할 |
+```bash
+npx wrangler deploy
+```
+
+## API 엔드포인트
+
+| 엔드포인트 | 설명 |
 |---|---|
-| `css/style.css` | 전체 디자인, 반응형 레이아웃, 애니메이션 |
-| `js/data.js` | 공지 데이터 배열, 추천 질문 목록 |
-| `js/common.js` | 네비게이션, 토스트 알림, D-day 계산, 북마크/캘린더 LocalStorage 관리, 모달 |
-| `js/notices.js` | 공지 필터링, 검색, 정렬 로직 |
-| `js/search.js` | 키워드 추출, 매칭 점수 계산, 검색 결과 표시 |
-| `js/calendar.js` | 월간 캘린더 렌더링, 일정 CRUD |
-| `js/bookmark.js` | 북마크 목록 표시, 실시간 동기화 |
-| `js/home.js` | 마감 임박 공지, 오늘 일정 미리보기 |
+| `GET /api/notices?category=all` | 전체 공지 목록 |
+| `GET /api/notices?category=학사` | 카테고리별 공지 |
+| `GET /api/notice-detail?url=<URL>` | 공지 본문+이미지 (v2) |
+| `GET /api/health` | 헬스체크 |
 
-## 🚀 실행 방법
+## Worker URL
+`https://campus-smart-hub-api.lsch4435.workers.dev`
 
-### 로컬 실행
-1. 저장소를 클론합니다:
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/campus-smart-hub.git
-   ```
-2. 프로젝트 폴더에서 `index.html`을 브라우저로 엽니다.
-
-### GitHub Pages 배포
-1. GitHub에 저장소를 생성합니다.
-2. 프로젝트 파일을 push합니다:
-   ```bash
-   cd campus-smart-hub
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/campus-smart-hub.git
-   git push -u origin main
-   ```
-3. GitHub 저장소 → **Settings** → **Pages**
-4. Source를 **Deploy from a branch** → **main** / **/(root)** 선택
-5. Save 클릭 → 몇 분 후 `https://YOUR_USERNAME.github.io/campus-smart-hub/` 에서 확인
-
-## 📱 반응형 디자인
-
-- 데스크톱 (1120px+): 2~3열 그리드
-- 태블릿 (768px~): 2열 그리드
-- 모바일 (~768px): 1열 + 햄버거 메뉴
-
-## 🎨 디자인 컨셉
-
-- **Notion / Medium 스타일**의 클린한 UI
-- 따뜻한 오프화이트 배경 + 그린 계열 포인트 컬러
-- Outfit + Noto Sans KR 폰트 조합
-- 카드 기반 레이아웃, 부드러운 hover 트랜지션
-
-## 📄 라이선스
-
-이 프로젝트는 학습 목적으로 제작되었습니다.
+## GitHub
+`https://github.com/lsch4435-code/campus_hub`

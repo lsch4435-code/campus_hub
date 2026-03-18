@@ -1,13 +1,11 @@
 /* ============================================
-   Cloudflare Worker - 한신대학교 공지 스크래퍼 API
+   Cloudflare Worker - 한신대학교 공지 스크래퍼 API v2
    
-   이 Worker는 한신대학교 홈페이지에서 공지사항을 
-   가져와 JSON 형태로 프론트엔드에 제공합니다.
-   
-   배포: Cloudflare Workers (무료 플랜)
+   변경사항:
+   - /api/notice-detail 엔드포인트 추가 (본문+이미지)
+   - 장학 URL 수정
    ============================================ */
 
-// ─── 설정 ───
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
@@ -15,8 +13,6 @@ const CORS_HEADERS = {
   'Content-Type': 'application/json; charset=utf-8',
 };
 
-// 한신대학교 게시판 URL 패턴
-// 학사공지: bbs ID = 143, 일반공지: bbs ID = 24, 장학: bbs ID = 273
 const BOARD_CONFIG = {
   '학사': {
     listUrl: 'https://www.hs.ac.kr/bbs/kor/274/artclList.do',
@@ -29,8 +25,8 @@ const BOARD_CONFIG = {
     site: 'kor',
   },
   '장학': {
-    listUrl: 'https://www.hs.ac.kr/bbsId: '275'/artclList.do',
-    bbsId: '273',
+    listUrl: 'https://www.hs.ac.kr/bbs/kor/275/artclList.do',
+    bbsId: '275',
     site: 'kor',
   },
   '혁신': {
@@ -40,10 +36,8 @@ const BOARD_CONFIG = {
   },
 };
 
-// ─── 메인 핸들러 ───
 export default {
   async fetch(request) {
-    // CORS preflight 처리
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS });
     }
@@ -52,7 +46,7 @@ export default {
     const path = url.pathname;
 
     try {
-      // /api/notices - 전체 공지 (여러 게시판 통합)
+      // 전체 공지 목록
       if (path === '/api/notices' || path === '/api/notices/') {
         const category = url.searchParams.get('category') || 'all';
         const page = parseInt(url.searchParams.get('page')) || 1;
@@ -60,33 +54,39 @@ export default {
         return jsonResponse(data);
       }
 
-      // /api/health - 헬스체크
-      if (path === '/api/health') {
-        return jsonResponse({ status: 'ok', timestamp: new Date().toISOString() });
+      // v2: 공지 상세 (본문 + 이미지)
+      if (path === '/api/notice-detail' || path === '/api/notice-detail/') {
+        const noticeUrl = url.searchParams.get('url');
+        if (!noticeUrl) {
+          return jsonResponse({ success: false, error: 'url 파라미터가 필요합니다' }, 400);
+        }
+        const data = await fetchNoticeDetail(noticeUrl);
+        return jsonResponse(data);
       }
 
-      // 기본 응답
+      // 헬스체크
+      if (path === '/api/health') {
+        return jsonResponse({ status: 'ok', version: 'v2', timestamp: new Date().toISOString() });
+      }
+
       return jsonResponse({
-        message: 'Campus Smart Hub API',
+        message: 'Campus Smart Hub API v2',
         endpoints: [
           'GET /api/notices?category=학사&page=1',
           'GET /api/notices?category=all',
+          'GET /api/notice-detail?url=<공지URL>',
           'GET /api/health',
         ],
       });
 
     } catch (error) {
-      return jsonResponse(
-        { error: error.message, stack: error.stack },
-        500
-      );
+      return jsonResponse({ error: error.message }, 500);
     }
   },
 };
 
-// ─── 공지 가져오기 ───
+// ─── 공지 목록 ───
 async function fetchNotices(category, page) {
-  // 'all'이면 학사 + 일반 + 장학 모두 가져오기
   if (category === 'all') {
     const results = await Promise.allSettled([
       fetchBoardList('학사', 1),
@@ -105,7 +105,6 @@ async function fetchNotices(category, page) {
       }
     });
 
-    // 날짜 기준 내림차순 정렬
     allNotices.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     return {
@@ -117,7 +116,6 @@ async function fetchNotices(category, page) {
     };
   }
 
-  // 특정 카테고리
   const notices = await fetchBoardList(category, page);
   return {
     success: true,
@@ -129,14 +127,119 @@ async function fetchNotices(category, page) {
   };
 }
 
-// ─── 게시판 목록 HTML을 파싱하여 공지 배열 반환 ───
+// ─── v2: 공지 상세 본문 + 이미지 가져오기 ───
+async function fetchNoticeDetail(noticeUrl) {
+  try {
+    // URL 유효성 검사: 한신대 도메인만 허용
+    const parsed = new URL(noticeUrl);
+    if (!parsed.hostname.endsWith('hs.ac.kr')) {
+      return { success: false, error: '한신대학교 URL만 지원합니다' };
+    }
+
+    const response = await fetch(noticeUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'text/html,application/xhtml+xml',
+        'Accept-Language': 'ko-KR,ko;q=0.9',
+      },
+    });
+
+    if (!response.ok) {
+      return { success: false, error: 'HTTP ' + response.status };
+    }
+
+    const html = await response.text();
+
+    // 본문 영역 추출 (K2Web 기반 게시판 공통 패턴)
+    let content = '';
+    let images = [];
+
+    // 방법 1: artclView 본문 영역
+    const viewBodyPatterns = [
+      /<div[^>]*class="[^"]*artclView[^"]*"[^>]*>([\s\S]*?)<\/div>\s*(?:<div[^>]*class="[^"]*artclBtn|<div[^>]*class="[^"]*file)/i,
+      /<div[^>]*id="[^"]*artclView[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<div/i,
+      /<td[^>]*class="[^"]*artclView[^"]*"[^>]*>([\s\S]*?)<\/td>/i,
+      // 일반적인 본문 영역
+      /<div[^>]*class="[^"]*view[_-]?con(?:tent)?[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+      /<div[^>]*class="[^"]*board[_-]?view[_-]?con(?:tent)?[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+      // 더 넓은 범위
+      /<div[^>]*class="[^"]*artclBody[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+    ];
+
+    for (const pattern of viewBodyPatterns) {
+      const match = html.match(pattern);
+      if (match && match[1] && match[1].trim().length > 10) {
+        content = match[1];
+        break;
+      }
+    }
+
+    // 본문에서 이미지 URL 추출
+    if (content) {
+      const imgPattern = /<img[^>]*src=["']([^"']+)["'][^>]*>/gi;
+      let imgMatch;
+      while ((imgMatch = imgPattern.exec(content)) !== null) {
+        let imgUrl = imgMatch[1];
+        if (imgUrl.startsWith('/')) {
+          imgUrl = 'https://www.hs.ac.kr' + imgUrl;
+        }
+        if (!imgUrl.includes('icon') && !imgUrl.includes('btn') && !imgUrl.includes('bg_')) {
+          images.push(imgUrl);
+        }
+      }
+    }
+
+    // 첨부파일 이미지도 찾기
+    const fileImgPattern = /href=["']([^"']*\.(?:jpg|jpeg|png|gif|webp)[^"']*)["']/gi;
+    let fileMatch;
+    while ((fileMatch = fileImgPattern.exec(html)) !== null) {
+      let fileUrl = fileMatch[1];
+      if (fileUrl.startsWith('/')) {
+        fileUrl = 'https://www.hs.ac.kr' + fileUrl;
+      }
+      if (!images.includes(fileUrl)) {
+        images.push(fileUrl);
+      }
+    }
+
+    // HTML → 텍스트 변환
+    let textContent = content
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/p>/gi, '\n\n')
+      .replace(/<\/div>/gi, '\n')
+      .replace(/<\/tr>/gi, '\n')
+      .replace(/<\/li>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&nbsp;/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+
+    return {
+      success: true,
+      content: textContent || null,
+      contentHtml: content || null,
+      images: images,
+      url: noticeUrl,
+      fetchedAt: new Date().toISOString(),
+    };
+
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+// ─── 게시판 목록 파싱 ───
 async function fetchBoardList(category, page) {
   const config = BOARD_CONFIG[category];
   if (!config) {
-    throw new Error(`Unknown category: ${category}. Available: ${Object.keys(BOARD_CONFIG).join(', ')}`);
+    throw new Error(`Unknown category: ${category}`);
   }
 
-  // 페이지 파라미터 포함 URL 구성
   const fetchUrl = `${config.listUrl}?page=${page}`;
 
   const response = await fetch(fetchUrl, {
@@ -155,32 +258,9 @@ async function fetchBoardList(category, page) {
   return parseNoticeList(html, category, config);
 }
 
-// ─── HTML 파싱 (정규식 기반) ───
 function parseNoticeList(html, category, config) {
   const notices = [];
 
-  /*
-    한신대 게시판 HTML 구조 (K2Web 기반):
-    <tr> 또는 <td> 안에 게시물 정보가 들어있음
-    
-    일반적인 패턴:
-    - <td class="td-num">번호</td>
-    - <td class="td-subject"><a href="...">제목</a></td>
-    - <td class="td-write">작성자</td>
-    - <td class="td-date">날짜</td>
-    - <td class="td-access">조회수</td>
-    
-    또는 artclView.do URL 패턴으로 링크 추출
-  */
-
-  // 방법 1: <a href="...artclView.do">제목</a> 패턴으로 추출
-  // URL 패턴: /bbs/{site}/{bbsId}/{artclId}/artclView.do
-  const linkPattern = new RegExp(
-    `<a[^>]*href=["']([^"']*?\\/${config.site}\\/${config.bbsId}\\/(\\d+)\\/artclView\\.do[^"']*)["'][^>]*>([^<]*(?:<[^/a][^>]*>[^<]*)*)<\\/a>`,
-    'gi'
-  );
-
-  // 보다 단순한 패턴도 시도
   const simpleLinkPattern = new RegExp(
     `href=["']([^"']*?\\/${config.bbsId}\\/(\\d+)\\/artclView\\.do[^"']*)["'][^>]*>\\s*(?:<[^>]+>\\s*)*([^<]+)`,
     'gi'
@@ -189,7 +269,6 @@ function parseNoticeList(html, category, config) {
   let match;
   const seenIds = new Set();
 
-  // 먼저 단순 패턴으로 시도
   while ((match = simpleLinkPattern.exec(html)) !== null) {
     const [, href, artclId, rawTitle] = match;
     
@@ -199,11 +278,9 @@ function parseNoticeList(html, category, config) {
     const title = cleanText(rawTitle);
     if (!title || title.length < 2) continue;
 
-    // 날짜 추출: artclId 주변에서 날짜 패턴 찾기
     const dateMatch = findNearbyDate(html, match.index);
     const date = dateMatch || '';
 
-    // 전체 URL 구성
     let fullUrl = href;
     if (href.startsWith('/')) {
       fullUrl = `https://www.hs.ac.kr${href}`;
@@ -222,15 +299,13 @@ function parseNoticeList(html, category, config) {
     });
   }
 
-  // 테이블 행 기반 파싱도 시도 (notices가 비어있을 경우)
+  // Fallback: table row parsing
   if (notices.length === 0) {
     const trPattern = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
     let trMatch;
 
     while ((trMatch = trPattern.exec(html)) !== null) {
       const rowHtml = trMatch[1];
-
-      // 링크 추출
       const aMatch = rowHtml.match(/href=["']([^"']*artclView\.do[^"']*)["'][^>]*>([\s\S]*?)<\/a>/i);
       if (!aMatch) continue;
 
@@ -239,14 +314,12 @@ function parseNoticeList(html, category, config) {
       const title = cleanText(rawTitle);
       if (!title || title.length < 2) continue;
 
-      // 게시글 ID 추출
       const idMatch = href.match(/\/(\d+)\/artclView\.do/);
       const artclId = idMatch ? idMatch[1] : Date.now().toString();
 
       if (seenIds.has(artclId)) continue;
       seenIds.add(artclId);
 
-      // 날짜 추출 (td-date 클래스 또는 날짜 패턴)
       const dateInRow = rowHtml.match(/(\d{4}[\.\-\/]\d{2}[\.\-\/]\d{2})/);
       const date = dateInRow ? dateInRow[1].replace(/\./g, '-') : '';
 
@@ -267,30 +340,24 @@ function parseNoticeList(html, category, config) {
   return notices;
 }
 
-// ─── 유틸리티 함수 ───
-
-// HTML 태그 제거 및 텍스트 정리
 function cleanText(text) {
   return text
-    .replace(/<[^>]+>/g, '')      // HTML 태그 제거
+    .replace(/<[^>]+>/g, '')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .replace(/&nbsp;/g, ' ')
-    .replace(/\s+/g, ' ')         // 연속 공백 정리
-    .replace(/새글/g, '')          // '새글' 라벨 제거
+    .replace(/\s+/g, ' ')
+    .replace(/새글/g, '')
     .trim();
 }
 
-// 특정 위치 주변에서 날짜 패턴 찾기
 function findNearbyDate(html, position) {
-  // 해당 위치 전후 500자 범위에서 날짜 탐색
   const start = Math.max(0, position - 200);
   const end = Math.min(html.length, position + 800);
   const context = html.substring(start, end);
-
   const dateMatch = context.match(/(\d{4})[\.\-\/](\d{2})[\.\-\/](\d{2})/);
   if (dateMatch) {
     return `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
@@ -298,7 +365,6 @@ function findNearbyDate(html, position) {
   return '';
 }
 
-// JSON 응답 생성
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data, null, 2), {
     status,

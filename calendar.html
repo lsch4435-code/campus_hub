@@ -8,11 +8,10 @@
 </head>
 <body>
 
-  <!-- 네비게이션 -->
   <nav class="nav">
     <div class="nav-inner">
       <a href="index.html" class="nav-logo">
-        <span class="logo-icon">C</span>
+        <span class="logo-icon">H</span>
         Campus Smart Hub
       </a>
       <button class="nav-toggle" aria-label="메뉴 열기">
@@ -21,19 +20,23 @@
       <div class="nav-links">
         <a href="index.html" class="nav-link">홈</a>
         <a href="notices.html" class="nav-link">공지사항</a>
-        <a href="ask.html" class="nav-link">질문하기</a>
         <a href="calendar.html" class="nav-link active">캘린더</a>
+        <a href="timetable.html" class="nav-link">시간표</a>
+        <a href="shuttle.html" class="nav-link">셔틀버스</a>
+        <a href="ask.html" class="nav-link">질문하기</a>
         <a href="bookmarks.html" class="nav-link">북마크</a>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" title="다크 모드">🌙</button>
       </div>
     </div>
   </nav>
 
-  <!-- 메인 콘텐츠 -->
   <main class="container">
 
     <div class="page-header">
       <h1>캘린더</h1>
-      <p>일정을 추가하고 관리하세요. 공지에서 추가한 일정도 확인할 수 있습니다.</p>
+      <p>일정을 추가하고 관리하세요. 학사일정을 한번에 등록할 수 있습니다.</p>
     </div>
 
     <!-- 캘린더 -->
@@ -43,7 +46,6 @@
         <h2 id="calendarTitle"></h2>
         <button class="calendar-nav-btn" id="calendarNext" title="다음 달">▶</button>
       </div>
-
       <div class="calendar-weekdays">
         <div class="calendar-weekday">일</div>
         <div class="calendar-weekday">월</div>
@@ -53,32 +55,30 @@
         <div class="calendar-weekday">금</div>
         <div class="calendar-weekday">토</div>
       </div>
-
       <div class="calendar-days" id="calendarDays"></div>
     </div>
 
     <!-- 일정 관리 패널 -->
     <div class="event-panel" id="eventPanel" style="display:none;">
       <h3>📅 <span id="eventDateTitle"></span></h3>
-
       <div class="event-add-form">
         <input type="text" id="eventInput" placeholder="새 일정 입력..." maxlength="100">
         <button class="btn btn-primary" id="eventAddBtn">추가</button>
       </div>
-
       <ul class="event-list" id="eventList"></ul>
     </div>
 
+    <!-- 학사일정 자동등록 -->
+    <div class="academic-calendar-section" id="academicCalendarSection"></div>
+
   </main>
 
-  <!-- 푸터 -->
   <footer class="footer">
     <div class="container">
-      <p>© 2026 Campus Smart Hub. 대학생 생활 도우미 웹사이트.</p>
+      <p>© 2026 Campus Smart Hub v2. 한신대학교 캠퍼스 생활 도우미.</p>
     </div>
   </footer>
 
-  <!-- 스크립트 -->
   <script src="js/data.js"></script>
   <script src="js/common.js"></script>
   <script src="js/calendar.js"></script>

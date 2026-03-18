@@ -1,1 +1,120 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>시간표 - Campus Smart Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">H</span>
+        Campus Smart Hub
+      </a>
+      <button class="nav-toggle" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">홈</a>
+        <a href="notices.html" class="nav-link">공지사항</a>
+        <a href="calendar.html" class="nav-link">캘린더</a>
+        <a href="timetable.html" class="nav-link active">시간표</a>
+        <a href="shuttle.html" class="nav-link">셔틀버스</a>
+        <a href="ask.html" class="nav-link">질문하기</a>
+        <a href="bookmarks.html" class="nav-link">북마크</a>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" title="다크 모드">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <div class="page-header">
+      <h1>시간표</h1>
+      <p>수업 시간표를 등록하고 한눈에 확인하세요. 수업을 클릭하면 삭제할 수 있습니다.</p>
+    </div>
+
+    <!-- 시간표 그리드 -->
+    <div class="timetable-container" id="timetableGrid"></div>
+
+    <!-- 수업 추가 폼 -->
+    <div class="timetable-add-form" id="timetableForm">
+      <h3>➕ 수업 추가</h3>
+      <div class="tt-form-grid">
+        <div class="tt-form-group">
+          <label for="ttName">과목명 *</label>
+          <input type="text" id="ttName" placeholder="예: 데이터구조" maxlength="30">
+        </div>
+        <div class="tt-form-group">
+          <label for="ttProfessor">교수명</label>
+          <input type="text" id="ttProfessor" placeholder="예: 홍길동" maxlength="20">
+        </div>
+        <div class="tt-form-group">
+          <label for="ttRoom">강의실</label>
+          <input type="text" id="ttRoom" placeholder="예: 신학관 301" maxlength="20">
+        </div>
+        <div class="tt-form-group">
+          <label for="ttDay">요일 *</label>
+          <select id="ttDay">
+            <option value="">선택</option>
+            <option value="0">월요일</option>
+            <option value="1">화요일</option>
+            <option value="2">수요일</option>
+            <option value="3">목요일</option>
+            <option value="4">금요일</option>
+          </select>
+        </div>
+        <div class="tt-form-group">
+          <label for="ttStart">시작 시간 *</label>
+          <select id="ttStart">
+            <option value="">선택</option>
+            <option value="9">09:00</option>
+            <option value="10">10:00</option>
+            <option value="11">11:00</option>
+            <option value="12">12:00</option>
+            <option value="13">13:00</option>
+            <option value="14">14:00</option>
+            <option value="15">15:00</option>
+            <option value="16">16:00</option>
+            <option value="17">17:00</option>
+          </select>
+        </div>
+        <div class="tt-form-group">
+          <label for="ttEnd">종료 시간 *</label>
+          <select id="ttEnd">
+            <option value="">선택</option>
+            <option value="10">10:00</option>
+            <option value="11">11:00</option>
+            <option value="12">12:00</option>
+            <option value="13">13:00</option>
+            <option value="14">14:00</option>
+            <option value="15">15:00</option>
+            <option value="16">16:00</option>
+            <option value="17">17:00</option>
+            <option value="18">18:00</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="ttAddBtn">수업 추가</button>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 Campus Smart Hub v2. 한신대학교 캠퍼스 생활 도우미.</p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/timetable.js"></script>
+
+</body>
+</html>

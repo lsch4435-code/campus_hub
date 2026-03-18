@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campus Smart Hub - 대학생 생활 도우미</title>
+  <title>Campus Smart Hub - 한신대 캠퍼스 생활 도우미</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
   <nav class="nav">
     <div class="nav-inner">
       <a href="index.html" class="nav-logo">
-        <span class="logo-icon">C</span>
+        <span class="logo-icon">H</span>
         Campus Smart Hub
       </a>
       <button class="nav-toggle" aria-label="메뉴 열기">
@@ -21,9 +21,15 @@
       <div class="nav-links">
         <a href="index.html" class="nav-link active">홈</a>
         <a href="notices.html" class="nav-link">공지사항</a>
-        <a href="ask.html" class="nav-link">질문하기</a>
         <a href="calendar.html" class="nav-link">캘린더</a>
+        <a href="timetable.html" class="nav-link">시간표</a>
+        <a href="shuttle.html" class="nav-link">셔틀버스</a>
+        <a href="ask.html" class="nav-link">질문하기</a>
         <a href="bookmarks.html" class="nav-link">북마크</a>
+      </div>
+      <div class="nav-right">
+        <button class="btn btn-sm btn-primary" id="enableNotifBtn" title="새 공지 알림">🔔 알림 받기</button>
+        <button class="theme-toggle" id="themeToggle" title="다크 모드">🌙</button>
       </div>
     </div>
   </nav>
@@ -33,18 +39,19 @@
 
     <!-- 히어로 섹션 -->
     <section class="hero">
-    <h1>더 스마트한<br><em>한신대 캠퍼스</em> 생활</h1>
-<p>한신대학교 공지 실시간 확인, 일정 관리, 질문 검색까지.<br>캠퍼스 생활에 필요한 모든 것을 한 곳에서.</p>
+      <h1>더 스마트한<br><em>한신대 캠퍼스</em> 생활</h1>
+      <p>한신대학교 공지 실시간 확인, 시간표, 셔틀버스, 일정 관리까지.<br>캠퍼스 생활에 필요한 모든 것을 한 곳에서.</p>
       <div class="hero-actions">
         <a href="notices.html" class="btn btn-primary">공지 확인하기 →</a>
-        <a href="ask.html" class="btn btn-secondary">질문하기</a>
+        <a href="timetable.html" class="btn btn-secondary">시간표 관리</a>
+        <a href="shuttle.html" class="btn btn-secondary">🚌 셔틀버스</a>
       </div>
     </section>
 
-    <!-- 마감 임박 공지 -->
+    <!-- 최신 공지 -->
     <section class="home-section">
       <div class="home-section-header">
-        <h2>⏰ 마감 임박 공지</h2>
+        <h2>📢 최신 공지</h2>
         <a href="notices.html">전체 보기 →</a>
       </div>
       <div class="home-card-grid" id="urgentNotices"></div>
@@ -64,11 +71,12 @@
   <!-- 푸터 -->
   <footer class="footer">
     <div class="container">
-      <p>© 2026 Campus Smart Hub. 대학생 생활 도우미 웹사이트.</p>
+      <p>© 2026 Campus Smart Hub v2. 한신대학교 캠퍼스 생활 도우미.
+        <a href="https://github.com/lsch4435-code/campus_hub" target="_blank" rel="noopener" style="color:var(--color-primary);margin-left:4px;">GitHub</a>
+      </p>
     </div>
   </footer>
 
-  <!-- 스크립트 -->
   <script src="js/data.js"></script>
   <script src="js/common.js"></script>
   <script src="js/home.js"></script>

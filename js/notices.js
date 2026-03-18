@@ -1,11 +1,6 @@
 /* ============================================
-   notices.js - 공지 목록 페이지 (API 연동 버전)
-   Campus Smart Hub
-   
-   변경사항:
-   - waitForNotices()로 비동기 데이터 대기
-   - 카테고리에 '일반', '혁신' 추가
-   - 로딩 상태 표시
+   notices.js - 공지 목록 (v2.1)
+   deadline 기반 정렬 완전 제거, 날짜 최신순만
    ============================================ */
 
 (function () {
@@ -17,7 +12,6 @@
   let currentFilter = '전체';
   let currentSearch = '';
 
-  /* --- 로딩 상태 표시 --- */
   function showLoading() {
     if (!grid) return;
     grid.innerHTML =
@@ -27,28 +21,19 @@
       '</div>';
   }
 
-  /* --- 공지 정렬 --- */
   function sortNotices(list) {
     return list.slice().sort(function (a, b) {
       if (a.pinned && !b.pinned) return -1;
       if (!a.pinned && b.pinned) return 1;
-      var ddayA = calculateDday(a.deadline);
-      var ddayB = calculateDday(b.deadline);
-      if (ddayA < 0 && ddayB >= 0) return 1;
-      if (ddayA >= 0 && ddayB < 0) return -1;
-      // 날짜 최신순
       return new Date(b.date) - new Date(a.date);
     });
   }
 
-  /* --- 공지 필터링 --- */
   function getFilteredNotices() {
     var result = notices;
-
     if (currentFilter !== '전체') {
       result = result.filter(function (n) { return n.category === currentFilter; });
     }
-
     if (currentSearch.trim()) {
       var query = currentSearch.trim().toLowerCase();
       result = result.filter(function (n) {
@@ -58,33 +43,24 @@
           n.category.includes(query);
       });
     }
-
     return sortNotices(result);
   }
 
-  /* --- 렌더링 --- */
   function renderNotices() {
     var filtered = getFilteredNotices();
-
-    if (resultCount) {
-      resultCount.textContent = filtered.length + '건';
-    }
-
+    if (resultCount) resultCount.textContent = filtered.length + '건';
     if (filtered.length === 0) {
       grid.innerHTML =
         '<div class="empty-state" style="grid-column:1/-1;">' +
-          '<div class="empty-icon">🔍</div>' +
-          '<p>검색 결과가 없습니다</p>' +
+          '<div class="empty-icon">🔍</div><p>검색 결과가 없습니다</p>' +
         '</div>';
       return;
     }
-
     grid.innerHTML = filtered.map(function (n) {
       return createNoticeCardHTML(n);
     }).join('');
   }
 
-  /* --- 이벤트 바인딩 --- */
   filterBtns.forEach(function (btn) {
     btn.addEventListener('click', function () {
       filterBtns.forEach(function (b) { b.classList.remove('active'); });
@@ -105,9 +81,6 @@
     });
   }
 
-  /* --- 초기화: 데이터 로드 대기 후 렌더 --- */
   showLoading();
-  waitForNotices().then(function () {
-    renderNotices();
-  });
+  waitForNotices().then(function () { renderNotices(); });
 })();

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학식 메뉴 - Campus Smart Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">H</span>
+        Campus Smart Hub
+      </a>
+      <button class="nav-toggle" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">홈</a>
+        <a href="notices.html" class="nav-link">공지사항</a>
+        <a href="calendar.html" class="nav-link">캘린더</a>
+        <a href="timetable.html" class="nav-link">시간표</a>
+        <a href="shuttle.html" class="nav-link">셔틀버스</a>
+        <a href="meal.html" class="nav-link active">학식</a>
+        <a href="ask.html" class="nav-link">질문하기</a>
+        <a href="bookmarks.html" class="nav-link">북마크</a>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" title="다크 모드">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <div class="page-header">
+      <h1>🍽️ 학식 메뉴</h1>
+      <p>한신대학교 학생식당 식단표입니다. 공지사항에 게시된 식단 정보를 자동으로 가져옵니다.</p>
+    </div>
+
+    <div id="mealContent">
+      <div class="empty-state">
+        <div class="empty-icon" style="animation:spin 1s linear infinite;">⏳</div>
+        <p>식단 정보를 불러오는 중...</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 Campus Smart Hub v2. 한신대학교 캠퍼스 생활 도우미.</p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/meal.js"></script>
+
+</body>
+</html>

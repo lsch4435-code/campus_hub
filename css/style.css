@@ -972,6 +972,54 @@ input, textarea { font-family: inherit; font-size: inherit; }
 
 .home-section { margin-bottom: 48px; }
 
+/* Quick Links Grid */
+.quick-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 12px;
+}
+
+.quick-link-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.quick-link-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.quick-link-card .ql-icon { font-size: 1.6rem; }
+.quick-link-card .ql-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.quick-link-card:hover .ql-label { color: var(--color-primary); }
+
+/* Two column layout */
+.home-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.home-mini-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
 .home-section-header {
   display: flex;
   align-items: center;
@@ -1367,6 +1415,8 @@ input, textarea { font-family: inherit; font-size: inherit; }
   .event-add-form { flex-direction: column; }
   .shuttle-container { grid-template-columns: 1fr; }
   .tt-form-grid { grid-template-columns: 1fr; }
+  .home-two-col { grid-template-columns: 1fr; }
+  .quick-links { grid-template-columns: repeat(4, 1fr); }
 }
 
 @media (max-width: 480px) {

@@ -47,6 +47,41 @@
       </div>
     </section>
 
+    <!-- 빠른 링크 -->
+    <section class="home-section">
+      <div class="quick-links">
+        <a href="notices.html" class="quick-link-card"><span class="ql-icon">📢</span><span class="ql-label">공지사항</span></a>
+        <a href="timetable.html" class="quick-link-card"><span class="ql-icon">📚</span><span class="ql-label">시간표</span></a>
+        <a href="shuttle.html" class="quick-link-card"><span class="ql-icon">🚌</span><span class="ql-label">셔틀버스</span></a>
+        <a href="meal.html" class="quick-link-card"><span class="ql-icon">🍽️</span><span class="ql-label">학식</span></a>
+        <a href="calendar.html" class="quick-link-card"><span class="ql-icon">📅</span><span class="ql-label">캘린더</span></a>
+        <a href="https://www.hs.ac.kr" target="_blank" class="quick-link-card"><span class="ql-icon">🏫</span><span class="ql-label">한신대 홈</span></a>
+        <a href="https://portal.hs.ac.kr" target="_blank" class="quick-link-card"><span class="ql-icon">🔑</span><span class="ql-label">포탈</span></a>
+        <a href="https://lms.hs.ac.kr" target="_blank" class="quick-link-card"><span class="ql-icon">💻</span><span class="ql-label">LMS</span></a>
+      </div>
+    </section>
+
+    <!-- 다음 셔틀 + 오늘 수업 (2칸 그리드) -->
+    <section class="home-section">
+      <div class="home-two-col">
+        <div class="home-mini-card">
+          <div class="home-section-header">
+            <h2>🚌 다음 셔틀</h2>
+            <a href="shuttle.html">전체 보기 →</a>
+          </div>
+          <div id="nextShuttle"><div class="empty-state" style="padding:20px;"><p style="font-size:0.9rem;">불러오는 중...</p></div></div>
+        </div>
+        <div class="home-mini-card">
+          <div class="home-section-header">
+            <h2>📚 오늘 수업</h2>
+            <a href="timetable.html">시간표 →</a>
+          </div>
+          <div id="todayClasses"><div class="empty-state" style="padding:20px;"><p style="font-size:0.9rem;">불러오는 중...</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 최신 공지 -->
     <section class="home-section">
       <div class="home-section-header">
         <h2>📢 최신 공지</h2>
@@ -55,6 +90,7 @@
       <div class="home-card-grid" id="urgentNotices"></div>
     </section>
 
+    <!-- 오늘 일정 -->
     <section class="home-section">
       <div class="home-section-header">
         <h2>📅 오늘 일정</h2>
